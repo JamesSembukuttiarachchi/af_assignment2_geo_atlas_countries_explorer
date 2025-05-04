@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../context/auth-context";
 import { Loader2 } from "lucide-react";
+import geoAtlasBg from "../assets/geo-atlas-bg.jpg";
 
 export default function Register() {
   const [name, setName] = useState("");
@@ -35,7 +36,7 @@ export default function Register() {
       } else {
         alert(result.message || "Registration failed");
       }
-    } catch (error) {
+    } catch {
       alert("An unexpected error occurred");
     } finally {
       setLoading(false);
@@ -43,7 +44,16 @@ export default function Register() {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-[80vh] px-4">
+    <div
+      className="flex justify-center items-center min-h-screen px-4 fixed inset-0 overflow-hidden"
+      style={{
+        backgroundImage: `url(${geoAtlasBg})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+        backgroundAttachment: "fixed",
+      }}
+    >
       <div className="w-full max-w-md bg-white rounded-lg shadow-md p-6">
         <h2 className="text-2xl font-bold mb-2">Create an account</h2>
         <p className="text-sm text-gray-600 mb-4">

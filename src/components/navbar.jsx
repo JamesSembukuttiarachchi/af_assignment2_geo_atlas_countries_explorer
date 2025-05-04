@@ -19,15 +19,10 @@ export default function Navbar() {
           className="flex items-center gap-2 font-bold text-xl text-gray-900 dark:text-white"
         >
           <Globe className="h-6 w-6" />
-          <span>Countries Explorer</span>
+          <span>Geo Atlas</span>
         </Link>
 
         <div className="flex items-center gap-4">
-          {/* Replace this with your own dark/light toggle logic if needed */}
-          <button className="text-sm px-3 py-1 rounded border dark:border-white border-black dark:text-white text-black">
-            Toggle Mode
-          </button>
-
           {user ? (
             <div className="flex items-center gap-4">
               <Link
@@ -47,7 +42,7 @@ export default function Navbar() {
             <div className="flex items-center gap-2">
               <Link
                 to="/login"
-                className="text-sm px-3 py-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700"
+                className="text-sm px-3 py-1 rounded bg-blue-600 text-white hover:bg-blue-700"
               >
                 Login
               </Link>
