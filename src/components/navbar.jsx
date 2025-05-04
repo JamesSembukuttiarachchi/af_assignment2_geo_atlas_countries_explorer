@@ -27,13 +27,13 @@ export default function Navbar() {
             <div className="flex items-center gap-4">
               <Link
                 to="/profile"
-                className="text-sm px-3 py-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700"
+                className="text-sm px-3 py-1 rounded bg-green-600 text-white hover:bg-green-700"
               >
                 Profile
               </Link>
               <button
                 onClick={handleLogout}
-                className="text-sm px-3 py-1 rounded border border-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 dark:border-gray-600"
+                className="text-sm px-3 py-1 rounded bg-orange-600 text-white hover:bg-orange-700"
               >
                 Logout
               </button>

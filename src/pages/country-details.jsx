@@ -27,29 +27,20 @@ export default function CountryDetails() {
         setError(null);
 
         const data = await fetchCountryByCode(countryCode);
-
-        if (!data) {
-          throw new Error("Country not found");
-        }
-
+        if (!data) throw new Error("Country not found");
         setCountry(data);
 
         if (user) {
           try {
             const favorites = await getFavorites(user.id);
-            setIsFavorite(
-              favorites.some((fav) => fav.countryCode === countryCode)
-            );
+            setIsFavorite(favorites.includes(countryCode));
           } catch (favError) {
             console.error("Failed to fetch favorites:", favError);
           }
         }
       } catch (err) {
         console.error("Error fetching country:", err);
-        setError(
-          err.message ||
-            "Failed to load country details. Please try again later."
-        );
+        setError(err.message || "Failed to load country details.");
       } finally {
         setLoading(false);
       }
@@ -68,17 +59,25 @@ export default function CountryDetails() {
       setFavoriteLoading(true);
 
       if (isFavorite) {
-        await removeFavorite(user.id, countryCode);
-        alert(`${country.name.common} removed from favorites.`);
+        const result = await removeFavorite(user.id, countryCode);
+        if (result.success) {
+          setIsFavorite(false);
+          alert(`${country.name.common} removed from favorites.`);
+        } else {
+          throw new Error(result.message || "Failed to remove favorite");
+        }
       } else {
-        await addFavorite(user.id, countryCode);
-        alert(`${country.name.common} added to favorites.`);
+        const result = await addFavorite(user.id, countryCode);
+        if (result.success) {
+          setIsFavorite(true);
+          alert(`${country.name.common} added to favorites.`);
+        } else {
+          throw new Error(result.message || "Failed to add favorite");
+        }
       }
-
-      setIsFavorite(!isFavorite);
     } catch (err) {
-      console.error(err);
-      alert("Failed to update favorites.");
+      console.error("Favorite error:", err);
+      alert(err.message || "Failed to update favorites.");
     } finally {
       setFavoriteLoading(false);
     }

@@ -1,8 +1,8 @@
 import { COUNTRIES_API_URL } from "../config";
 import {
-  getFavorites as getFirebaseFavorites,
-  addFavorite as addFirebaseFavorite,
-  removeFavorite as removeFirebaseFavorite,
+  getFirebaseFavorites,
+  addFirebaseFavorite,
+  removeFirebaseFavorite,
 } from "./firebase-service";
 
 // Countries API
@@ -54,16 +54,36 @@ export const fetchCountryByCode = async (code) => {
 
 // Favorites API using Firebase
 export const getFavorites = async (userId) => {
-  if (!userId) throw new Error("User ID is required");
-  return await getFirebaseFavorites(userId);
+  try {
+    if (!userId) throw new Error("User ID is required");
+    const favorites = await getFirebaseFavorites(userId);
+    return Array.isArray(favorites) ? favorites : [];
+  } catch (error) {
+    console.error("Error getting favorites:", error);
+    throw new Error("Failed to get favorites. Please try again.");
+  }
 };
 
 export const addFavorite = async (userId, countryCode) => {
-  if (!userId) throw new Error("User ID is required");
-  return await addFirebaseFavorite(userId, countryCode);
+  try {
+    if (!userId || !countryCode) {
+      throw new Error("User ID and country code are required");
+    }
+    return await addFirebaseFavorite(userId, countryCode);
+  } catch (error) {
+    console.error("Error adding favorite:", error);
+    throw new Error(error.message || "Failed to add favorite");
+  }
 };
 
 export const removeFavorite = async (userId, countryCode) => {
-  if (!userId) throw new Error("User ID is required");
-  return await removeFirebaseFavorite(userId, countryCode);
+  try {
+    if (!userId || !countryCode) {
+      throw new Error("User ID and country code are required");
+    }
+    return await removeFirebaseFavorite(userId, countryCode);
+  } catch (error) {
+    console.error("Error removing favorite:", error);
+    throw new Error(error.message || "Failed to remove favorite");
+  }
 };

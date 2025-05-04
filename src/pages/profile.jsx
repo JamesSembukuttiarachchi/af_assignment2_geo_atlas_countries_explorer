@@ -21,20 +21,17 @@ export default function Profile() {
       try {
         setLoading(true);
         const favoritesData = await getFavorites(user.id);
-
+        console.log("Favorites data:", favoritesData);
         const countriesDetails = await Promise.all(
           favoritesData.map(async (fav) => {
             try {
-              const countryData = await fetchCountryByCode(fav.countryCode);
+              const countryData = await fetchCountryByCode(fav);
               return {
                 ...fav,
                 details: countryData,
               };
             } catch (error) {
-              console.error(
-                `Error fetching details for ${fav.countryCode}:`,
-                error
-              );
+              console.error(`Error fetching details for ${fav}:`, error);
               return {
                 ...fav,
                 details: null,

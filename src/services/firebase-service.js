@@ -1,93 +1,75 @@
 import { db } from "../firebase/config";
 import {
   collection,
-  addDoc,
   query,
   where,
   getDocs,
+  addDoc,
   deleteDoc,
-  doc,
 } from "firebase/firestore";
 
-// Collection references
 const FAVORITES_COLLECTION = "favorites";
 
-// Get all favorites for the current user
-export const getFavorites = async (userId) => {
+export const getFirebaseFavorites = async (userId) => {
   try {
-    const favoritesRef = collection(db, FAVORITES_COLLECTION);
-    const q = query(favoritesRef, where("userId", "==", userId));
+    const q = query(
+      collection(db, FAVORITES_COLLECTION),
+      where("userId", "==", userId)
+    );
     const querySnapshot = await getDocs(q);
-
-    const favorites = [];
-    querySnapshot.forEach((doc) => {
-      favorites.push({
-        id: doc.id,
-        ...doc.data(),
-      });
-    });
-
-    return favorites;
+    return querySnapshot.docs.map((doc) => doc.data().countryCode);
   } catch (error) {
-    console.error("Error fetching favorites:", error);
+    console.error("Error getting favorites:", error);
     throw error;
   }
 };
 
-// Add a country to favorites
-export const addFavorite = async (userId, countryCode) => {
+export const addFirebaseFavorite = async (userId, countryCode) => {
   try {
     // Check if already exists
-    const favoritesRef = collection(db, FAVORITES_COLLECTION);
-    const q = query(
-      favoritesRef,
+    const existsQuery = query(
+      collection(db, FAVORITES_COLLECTION),
       where("userId", "==", userId),
       where("countryCode", "==", countryCode)
     );
-    const querySnapshot = await getDocs(q);
+    const existsSnapshot = await getDocs(existsQuery);
 
-    if (!querySnapshot.empty) {
-      return { message: "Country already in favorites" };
+    if (!existsSnapshot.empty) {
+      return { success: false, message: "Already in favorites" };
     }
 
     // Add new favorite
-    const docRef = await addDoc(favoritesRef, {
+    await addDoc(collection(db, FAVORITES_COLLECTION), {
       userId,
       countryCode,
       createdAt: new Date(),
     });
 
-    return {
-      id: docRef.id,
-      countryCode,
-      userId,
-      message: "Country added to favorites",
-    };
+    return { success: true };
   } catch (error) {
     console.error("Error adding favorite:", error);
     throw error;
   }
 };
 
-// Remove a country from favorites
-export const removeFavorite = async (userId, countryCode) => {
+export const removeFirebaseFavorite = async (userId, countryCode) => {
   try {
-    const favoritesRef = collection(db, FAVORITES_COLLECTION);
     const q = query(
-      favoritesRef,
+      collection(db, FAVORITES_COLLECTION),
       where("userId", "==", userId),
       where("countryCode", "==", countryCode)
     );
     const querySnapshot = await getDocs(q);
 
     if (querySnapshot.empty) {
-      return { message: "Favorite not found" };
+      return { success: false, message: "Favorite not found" };
     }
 
-    // Delete the document
-    await deleteDoc(doc(db, FAVORITES_COLLECTION, querySnapshot.docs[0].id));
+    // Delete all matching documents (though there should only be one)
+    const deletePromises = querySnapshot.docs.map((doc) => deleteDoc(doc.ref));
+    await Promise.all(deletePromises);
 
-    return { message: "Favorite removed successfully" };
+    return { success: true };
   } catch (error) {
     console.error("Error removing favorite:", error);
     throw error;
