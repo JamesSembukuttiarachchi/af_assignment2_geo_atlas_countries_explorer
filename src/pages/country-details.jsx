@@ -7,7 +7,7 @@ import {
   getFavorites,
 } from "../services/api";
 import { useAuth } from "../context/auth-context";
-import { ArrowLeft, Heart, Globe } from "lucide-react";
+import { ArrowLeft, Heart, Globe, AlertCircle } from "lucide-react";
 
 export default function CountryDetails() {
   const { countryCode } = useParams();
@@ -24,18 +24,32 @@ export default function CountryDetails() {
     const fetchData = async () => {
       try {
         setLoading(true);
+        setError(null);
+
         const data = await fetchCountryByCode(countryCode);
+
+        if (!data) {
+          throw new Error("Country not found");
+        }
+
         setCountry(data);
 
         if (user) {
-          const favorites = await getFavorites(user.id);
-          setIsFavorite(
-            favorites.some((fav) => fav.countryCode === countryCode)
-          );
+          try {
+            const favorites = await getFavorites(user.id);
+            setIsFavorite(
+              favorites.some((fav) => fav.countryCode === countryCode)
+            );
+          } catch (favError) {
+            console.error("Failed to fetch favorites:", favError);
+          }
         }
       } catch (err) {
-        setError("Failed to load country details. Please try again later.");
-        console.error(err);
+        console.error("Error fetching country:", err);
+        setError(
+          err.message ||
+            "Failed to load country details. Please try again later."
+        );
       } finally {
         setLoading(false);
       }
@@ -63,6 +77,7 @@ export default function CountryDetails() {
 
       setIsFavorite(!isFavorite);
     } catch (err) {
+      console.error(err);
       alert("Failed to update favorites.");
     } finally {
       setFavoriteLoading(false);
@@ -87,16 +102,28 @@ export default function CountryDetails() {
 
   if (error) {
     return (
-      <div className="flex flex-col items-center justify-center h-[50vh]">
-        <Globe className="h-16 w-16 text-gray-500 mb-4" />
-        <h2 className="text-2xl font-bold mb-2">Oops!</h2>
-        <p className="text-gray-500 mb-4">{error}</p>
-        <button
-          onClick={() => navigate("/")}
-          className="px-4 py-2 border rounded"
-        >
-          Back to Home
-        </button>
+      <div className="flex flex-col items-center justify-center min-h-[70vh] p-4 text-center">
+        <div className="bg-red-50 p-6 rounded-lg max-w-md w-full">
+          <div className="flex flex-col items-center">
+            <AlertCircle className="h-12 w-12 text-red-500 mb-4" />
+            <h2 className="text-2xl font-bold mb-2 text-gray-800">Oops!</h2>
+            <p className="text-gray-600 mb-6">{error}</p>
+            <div className="flex gap-4">
+              <button
+                onClick={() => navigate(-1)}
+                className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 transition"
+              >
+                Go Back
+              </button>
+              <button
+                onClick={() => navigate("/")}
+                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
+              >
+                Back to Home
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
