@@ -47,7 +47,7 @@ Geo Atlas is a React-based web application that allows users to explore country 
 ## Firebase Setup
 
 1. Firestore Rules: Ensure your Firestore rules allow authenticated users to manage their favorites:
-   
+   ```bash
    rules_version = '2';
     service cloud.firestore {
     match /databases/{database}/documents {
