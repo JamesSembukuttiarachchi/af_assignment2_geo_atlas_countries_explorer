@@ -26,7 +26,7 @@ Geo Atlas is a React-based web application that allows users to explore country 
    
 
 2. Install dependencies:
-   
+   ```bash
    npm install
 
 3. Set up Firebase:
@@ -36,12 +36,12 @@ Geo Atlas is a React-based web application that allows users to explore country 
     Replace the Firebase configuration in src/firebase/config.js with your own.
 
 4. Start the development server:
-   
+   ```bash
    npm run dev
 
 5. Open the app in your browser:
-
-        http://localhost:5173
+   ```bash
+   http://localhost:5173
 
 
 ## Firebase Setup
