@@ -22,7 +22,7 @@ Geo Atlas is a React-based web application that allows users to explore country 
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/SE1020-IT2070-OOP-DSA-25/af-2-JamesSembukuttiarachchi.git
+   git clone https://github.com/JamesSembukuttiarachchi/af_assignment2_geo_atlas_countries_explorer.git
    
 
 2. Install dependencies:
