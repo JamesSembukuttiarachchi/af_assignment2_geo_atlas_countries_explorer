@@ -1,5 +1,7 @@
 # Geo Atlas - Countries Explorer
 
+https://geoatlasexpo.netlify.app/
+
 Geo Atlas is a React-based web application that allows users to explore country details, manage their favorite countries, and perform user authentication. The project is built using Vite for fast development and Firebase for backend services.
 
 ## Features
